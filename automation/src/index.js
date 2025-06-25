@@ -6,9 +6,10 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 
 async function scrapConnections(linkedinCookies) {
-  const url = `https://www.linkedin.com/search/results/people/?network=%5B%22F%22%5D&origin=MEMBER_PROFILE_CANNED_SEARCH`;
+  const url = `https://www.linkedin.com/search/results/people/?network=["F"]&origin=MEMBER_PROFILE_CANNED_SEARCH`;
 
   const browser = await puppeteer.launch({ headless: "new" });
+  await browser.setCookie(...linkedinCookies);
   const page = await browser.newPage();
 
   await page.setViewport({
@@ -16,9 +17,7 @@ async function scrapConnections(linkedinCookies) {
     height: 1080,
   });
 
-  await page.setCookie(...linkedinCookies);
-
-  let currentPage = 100;
+  let currentPage = 99;
   const scrapTimestamp = new Date();
 
   let connections = [];
@@ -37,6 +36,8 @@ async function scrapConnections(linkedinCookies) {
 
     const html = await page.content();
     if (html.includes("No results found")) {
+      currentPage -= 1;
+      console.log("No more connections...");
       break;
     }
 
@@ -48,14 +49,14 @@ async function scrapConnections(linkedinCookies) {
       const items = document.querySelectorAll("ul[role=list]>li");
 
       items.forEach((item) => {
-        const img = item.querySelector("img");
-        const anchor = item.querySelector("a");
+        const imgEl = item.querySelector("img");
+        const anchorEl = item.querySelector("a");
         const nameEl = item.querySelector("a>span>span");
 
         results.push({
-          image: img ? img.src : null,
+          image: imgEl ? imgEl.src : null,
           name: nameEl ? nameEl.innerText.trim() : null,
-          profile: anchor ? anchor.href : null,
+          profile: anchorEl ? anchorEl.href?.split("?")[0] : null,
         });
       });
 
@@ -63,7 +64,7 @@ async function scrapConnections(linkedinCookies) {
     });
 
     console.log(
-      `✅Scraped page ${currentPage} with ${data.length} connections`
+      `✅ Scraped page ${currentPage} with ${data.length} connections`
     );
 
     connections.push(...data);
@@ -75,7 +76,7 @@ async function scrapConnections(linkedinCookies) {
   }
 
   console.log(
-    `✅Scraped ${connections.length} connections\ntotal time: ${
+    `✅ Scraped ${connections.length} connections\ntotal time: ${
       Date.now() - scrapTimestamp
     }ms 🎉\nTotal Pages: ${currentPage}`
   );
@@ -85,6 +86,15 @@ async function scrapConnections(linkedinCookies) {
     ...connection,
     timestamp: scrapTimestamp,
   }));
+
+  // ! prepend usama for testing purpose, TEMP REMOVE IT⚠️⚠️
+  connections.unshift({
+    image:
+      "https://media.licdn.com/dms/image/v2/D4D35AQHnmb2PtTHxWw/profile-framedphoto-shrink_100_100/B4DZYmTsnZG8Ao-/0/1744399420144?e=1751472000&v=beta&t=rXaba4l1Wj8FcJeaGgyaxy9ceLOEmdhO_jsY_Kg-4b0",
+    name: "Usama Ahmed",
+    profile: "https://www.linkedin.com/in/usamabinkashif",
+    timestamp: scrapTimestamp,
+  });
 
   await fs.writeFile(
     path.join(__dirname, "./data/connections.json"),
