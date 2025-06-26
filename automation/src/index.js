@@ -8,7 +8,7 @@ const path = require("node:path");
 async function scrapConnections(linkedinCookies) {
   const url = `https://www.linkedin.com/search/results/people/?network=["F"]&origin=MEMBER_PROFILE_CANNED_SEARCH`;
 
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: true });
   await browser.setCookie(...linkedinCookies);
   const page = await browser.newPage();
 
