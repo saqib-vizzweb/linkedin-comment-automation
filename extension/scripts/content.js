@@ -27,7 +27,7 @@ async function processPosts() {
 
       console.log("Processing post:", postText);
 
-      if (commentBtn) {
+      if (commentBtn && postText) {
         const { comment } = await chrome.runtime.sendMessage({
           action: "generateComment",
           postText: postText,
