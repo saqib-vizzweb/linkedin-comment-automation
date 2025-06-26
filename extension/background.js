@@ -46,6 +46,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            system_instruction: {
+              parts: [
+                {
+                  text: "You are a professional LinkedIn engagement assistant. Your task is to generate thoughtful, relevant, and engaging comments based on the caption of a LinkedIn post. Your comments should reflect a professional tone while being human, authentic, and aligned with LinkedIn best practices.",
+                },
+              ],
+            },
             contents: [
               {
                 parts: [
