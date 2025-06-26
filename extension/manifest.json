@@ -1,10 +1,21 @@
 {
-  "name": "Hello Extensions of the world!",
-    "description": "Base Level Extension",
-    "version": "1.0",
-    "manifest_version": 3,
-    "action": {
-      "default_popup": "popup/popup.html",
-      "default_icon": "images/hello_extensions.png"
+  "name": "Linkedin Comment Generator",
+  "description": "This extension generates a random comment for a Linkedin post",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "images/icon.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://*.linkedin.com/*", "https://api.openai.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/feed*"],
+      "js": ["scripts/content.js"]
     }
-  }
+  ]
+}
