@@ -33,10 +33,9 @@ async function processPosts() {
           postText: postText,
         });
 
-        // Store generated comment
+        // store comment in data-generated-comment attribute
         post.dataset.generatedComment = comment;
 
-        // Modify comment button
         commentBtn.addEventListener("click", () => {
           setTimeout(() => injectComment(post), 500);
         });

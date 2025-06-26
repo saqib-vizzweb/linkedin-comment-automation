@@ -1,6 +1,6 @@
 {
   "name": "Linkedin Comment Generator",
-  "description": "This extension generates a random comment for a Linkedin post",
+  "description": "This extension generates an ai based comment for a Linkedin post",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
