@@ -1,7 +1,5 @@
 console.log("running background.js");
 
-const API_KEY = "";
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "generateComment") {
     // const { postText } = request;
@@ -34,35 +32,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     //   sendResponse({ comment: data.choices[0].message.content.trim() });
     // });
 
-    fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                {
-                  text: `Generate a professional short LinkedIn comment for this post: "${request.postText.substring(
-                    0,
-                    1000
-                  )}"`,
-                },
-              ],
-            },
-          ],
-        }),
+    chrome.storage.sync.get(["gemini-api-key"], async (result) => {
+      if (!result["gemini-api-key"]) {
+        console.error("No API key found");
+        return;
       }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        sendResponse({
-          comment: data.candidates[0].content.parts[0].text.trim(),
-        });
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${result["gemini-api-key"]}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `Generate a professional short LinkedIn comment for this post: "${request.postText.substring(
+                      0,
+                      1000
+                    )}"`,
+                  },
+                ],
+              },
+            ],
+          }),
+        }
+      );
+
+      const data = await response.json();
+      sendResponse({
+        comment: data.candidates[0].content.parts[0].text.trim(),
       });
+    });
 
     return true; // Keeps message channel open
   }

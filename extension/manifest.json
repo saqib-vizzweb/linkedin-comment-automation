@@ -7,8 +7,13 @@
     "default_popup": "popup/popup.html",
     "default_icon": "images/icon.png"
   },
+  "options_page": "options/options.html",
   "permissions": ["storage", "activeTab", "scripting"],
-  "host_permissions": ["https://*.linkedin.com/*", "https://api.openai.com/*"],
+  "host_permissions": [
+    "https://*.linkedin.com/*",
+    "https://api.openai.com/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
