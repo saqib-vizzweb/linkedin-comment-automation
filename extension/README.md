@@ -6,6 +6,7 @@ Chrome Extension to generate comments based on linkedin post caption and append 
 
 - Gemini 2.0 flash for comment generation
 - Options page to add gemini api key
+- Chrome manifest v3
 
 ### Setup
 
@@ -15,3 +16,4 @@ Chrome Extension to generate comments based on linkedin post caption and append 
 - Click options and add gemini api key and press save button
 - Open linked in feeds page and click on any post comment button to generate comment
 - If comment is not generated in 1st try, click comment button again
+- Get gemini api key: [https://aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey)
